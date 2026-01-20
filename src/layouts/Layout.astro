@@ -1,0 +1,58 @@
+---
+// CSS 
+import "./layout.css";
+// Components
+import Player from "@/components/player/Player";
+import SideBarLeft from "@/components/sideBarLeft/SideBarLeft";
+
+// ViewTransition Api
+import { ViewTransitions } from "astro:transitions";
+
+interface Props {
+    title: string;
+}
+
+
+const { title } = Astro.props;
+const { id } = Astro.params
+const ident = Number(id)
+
+const description = 'Explora y disfruta de una experiencia de reproducción de música excepcional en nuestro sitio. Descubre tus canciones favoritas, crea listas de reproducción personalizadas y sumérgete en un mundo de sonidos. ¡Únete a nosotros y lleva la música a todas partes!'
+---
+
+<!doctype html>
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='description' content={description}/>
+        <meta name='viewport' content='width=device-width' />
+        <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+        <meta name='generator' content={Astro.generator} />
+        <title>{title}</title>
+        <ViewTransitions fallback='none' />
+        <link rel='stylesheet' href='/fonts/fonts.css'/>
+    </head>
+    <body id="app" class='relativo h-[100svh] md:pt-2 md:p-2 md:gap-2'>
+        <!-- S I D E B A R L E F T -->
+        <aside class='hidden md:[grid-area:left-sidebar] md:flex flex-col overflow-y-auto'>
+            <SideBarLeft
+                client:load
+                transition:persist
+                transition:name='sidebar-left'
+            />
+        </aside>
+        <!-- M A I N  -->
+        <main class='[grid-area:main-view] md:rounded-lg overflow-y-auto'>
+            <slot />
+        </main>
+        <!-- C O N T R O L - S O N G  -->
+        <footer class='bg-black w-full relative z-50 [grid-area:now-player] h-[72px] flex justify-between items-center rounded-2xl'>
+            <Player 
+                id={ident} 
+                client:load 
+                transition:name='media-player' 
+                transition:persist
+            />
+        </footer>
+    </body>
+</html>

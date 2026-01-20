@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// data
+import { playlists } from "@/lib/data";
+
+// componentes
+import PlayListItemCard from "@/components/menu/Home/PlayListItemCard.astro";
+import { Greating } from "@/components/menu/Home/Greating";
+import CardLarge from "@/components/menu/Home/CardLarge.astro";
+import NavigationButtons from "@/components/menu/NavigationButtons";
+import ProjectInfo from "@/components/ProjectInfo.astro";
+
+// color inicial
+const gradiantPorDefecto = '#134e4a'
+---
+
+<Layout title='Spotify Astro'>
+    <div class='relative pt-4 sm:pt-0 transition-colors duration-1000 bg-[#0a0908] sm:bg-base min-h-full sm:rounded-lg'>
+        <!-- GradiantFondo -->
+        <div
+            id='gradiantFondo'
+            class='absolute w-full h-40 sm:h-[330px] bg-fondoMain transition-colors duration-700 ease-in-out inset-0 bg-gradient-to-t from-[#0a0908]  via-[#0a0908] /80 sm:from-base sm:via-base/80'
+            style=`--fondoMain-color: ${gradiantPorDefecto}`
+        ></div>
+
+        <!-- PageHeader -->
+        <NavigationButtons client:load backDisable={true} indexPage={false}>
+            <ProjectInfo/>
+        </NavigationButtons>
+        <section class='relative z-10 px-4 md:px-6 flex flex-col gap-6 overflow-y-visible'>
+            <header>
+                <!-- Saludos -->
+                <Greating />
+
+                <!-- CardLarge -->
+                <div id='cardLarge-container' class='grid gap-2 sm:gap-y-4 sm:gap-x-6 grid-cols-2 md:[grid-template-columns:_repeat(auto-fit,_minmax(286px,_1fr))] lg:grid-cols-2 xl:grid-cols-3 mt-3 sm:mt-4'>
+                    { 
+                        playlists.slice(6, 12).map((playlist) => (
+                            <CardLarge playlist={playlist} />
+                        ))
+                    }
+                </div>
+            </header>
+
+            <footer>
+                <h2 class='text-lg sm:text-2xl font-bold mb-4'>Hecho para ti</h2>
+                <div class='grid [grid-template-columns:_repeat(auto-fit,_minmax(100px,_1fr))] gap-2 sm:flex sm:flex-wrap sm:gap-6'>
+                    { 
+                        playlists.slice(0, 6).map((playlist) => (
+                            <PlayListItemCard playlist={playlist} />
+                        ))
+                    }
+                </div>
+            </footer>
+        </section>
+    </div>
+</Layout>
+
+<script is:inline>
+
+    document.addEventListener('astro:page-load', () => {
+        const grandiantColor$ = document.querySelector("#gradiantFondo") // Elemento gradiante
+        const playlistContainer = document.querySelector("#cardLarge-container") // Contenedor
+
+        if (grandiantColor$ && playlistContainer) {
+            playlistContainer.addEventListener("mouseover", (e) => {
+                const card = e.target.closest("[data-color]"); // recuperar el color de las card          
+                if (card) {
+                    const newColor = card.getAttribute("data-color")
+                     // cambiar el color cuando ocurra el evento
+                    grandiantColor$.style.setProperty("--fondoMain-color", newColor || "");
+                }
+            });
+        }
+    })
+
+</script>
